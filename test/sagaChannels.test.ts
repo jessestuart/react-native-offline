@@ -1,5 +1,5 @@
-import { eventChannel } from 'redux-saga'
-import { NetInfo } from 'react-native'
+// import { eventChannel } from 'redux-saga'
+// import { NetInfo } from 'react-native'
 import {
   createNetInfoConnectionChangeChannel,
   netInfoEventChannelFn,
@@ -9,6 +9,9 @@ import {
 
 jest.mock('redux-saga')
 jest.mock('NetInfo')
+
+const { eventChannel } = require('redux-saga')
+const { NetInfo } = require('react-native')
 
 describe('createNetInfoConnectionChangeChannel', () => {
   it('returns a redux-saga channel', () => {
@@ -37,6 +40,10 @@ describe('createNetInfoConnectionChangeChannel', () => {
 })
 
 describe('createIntervalChannel', () => {
+  beforeEach(() => {
+    jest.mock('redux-saga')
+  })
+
   const interval = 50
   it('returns a redux-saga channel', () => {
     const eventChannelMock = jest.fn().mockReturnValue('channel')

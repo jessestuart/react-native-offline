@@ -1,4 +1,5 @@
 import { connect } from 'react-redux'
+import _ from 'lodash'
 import * as React from 'react'
 
 import {
@@ -23,6 +24,14 @@ interface Props {
   shouldPing?: boolean
 }
 
+function mapStateToProps(state: {
+  network: NetworkState
+}): { isConnected: boolean } {
+  return {
+    isConnected: state.network.isConnected,
+  }
+}
+
 class ReduxNetworkProvider extends React.Component<Props> {
   public static readonly defaultProps = {
     pingTimeout: DEFAULT_TIMEOUT,
@@ -45,7 +54,7 @@ class ReduxNetworkProvider extends React.Component<Props> {
     const { children } = this.props
     return (
       <NetworkConnectivity
-        {...this.props}
+        {..._.without(this.props, 'children')}
         onConnectivityChange={this.handleConnectivityChange}
       >
         {() => children}
@@ -54,16 +63,12 @@ class ReduxNetworkProvider extends React.Component<Props> {
   }
 }
 
-function mapStateToProps(state: { network: NetworkState }) {
-  return {
-    isConnected: state.network.isConnected,
-  }
-}
-
 const ConnectedReduxNetworkProvider = connect(mapStateToProps)(
   ReduxNetworkProvider,
 )
 
-export { ReduxNetworkProvider, mapStateToProps }
-
-export default ConnectedReduxNetworkProvider
+export {
+  ConnectedReduxNetworkProvider as default,
+  ReduxNetworkProvider,
+  mapStateToProps,
+}

@@ -1,15 +1,17 @@
-import { put, select, call, take, cancelled, fork } from 'redux-saga/effects'
 import { eventChannel } from 'redux-saga'
+import { put, select, call, take, cancelled, fork } from 'redux-saga/effects'
+
 import { AppState, NetInfo, Platform } from 'react-native'
-import { networkSelector } from './reducer'
-import checkInternetAccess from '../utils/checkInternetAccess'
-import { connectionChange } from './actionCreators'
-import { HTTPMethod } from '../types'
+
 import {
   DEFAULT_HTTP_METHOD,
   DEFAULT_PING_SERVER_URL,
   DEFAULT_TIMEOUT,
 } from '../utils/constants'
+import { HTTPMethod } from '../types'
+import { checkInternetAccess } from '../utils/checkInternetAccess'
+import { connectionChange } from './actionCreators'
+import networkSelector from './reducer'
 
 interface Arguments {
   pingTimeout: number

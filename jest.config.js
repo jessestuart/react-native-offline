@@ -2,6 +2,7 @@
 const path = require('path')
 
 module.exports = {
+  bail: true,
   collectCoverage: true,
   preset: 'react-native',
   moduleDirectories: ['node_modules', 'src', 'test'],
