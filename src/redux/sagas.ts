@@ -1,5 +1,5 @@
 import { put, select, call, take, cancelled, fork } from 'redux-saga/effects'
-import { eventChannel, Generator } from 'redux-saga'
+import { eventChannel } from 'redux-saga'
 import { AppState, NetInfo, Platform } from 'react-native'
 import { networkSelector } from './reducer'
 import checkInternetAccess from '../utils/checkInternetAccess'

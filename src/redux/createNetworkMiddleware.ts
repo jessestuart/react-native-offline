@@ -24,6 +24,12 @@ interface Arguments {
   queueReleaseThrottle?: number
 }
 
+const DefaultNetworkMiddleware: Arguments = Object.freeze({
+  regexActionType: /FETCH.*REQUEST/,
+  actionTypes: [],
+  queueReleaseThrottle: 50,
+})
+
 function validateParams(regexActionType, actionTypes): void | never {
   if ({}.toString.call(regexActionType) !== '[object RegExp]')
     throw new Error('You should pass a regex as regexActionType param')
@@ -40,10 +46,18 @@ function findActionToBeDismissed(action, actionQueue) {
 }
 
 function isObjectAndShouldBeIntercepted(
-  action,
-  regexActionType,
-  actionTypes,
+  action: { type: string },
+  regexActionType: RegExp,
+  actionTypes: string[],
 ): boolean {
+  validateParams(regexActionType, actionTypes)
+
+  // if (!regexActionType) {
+  //   throw new Error(
+  //     '[ERROR] isObjectAndShouldBeIntercepted: `regexActionType` must be defined.',
+  //   )
+  // }
+
   return (
     typeof action === 'object' &&
     (regexActionType.test(action.type) || actionTypes.includes(action.type))
@@ -92,7 +106,7 @@ function createNetworkMiddleware({
   regexActionType = /FETCH.*REQUEST/,
   actionTypes = [],
   queueReleaseThrottle = 50,
-}: Arguments) {
+}: Arguments = DefaultNetworkMiddleware): unknown {
   return ({ getState }: MiddlewareAPI<State>) => (
     next: (action: any) => void,
   ) => (action: any) => {
@@ -138,5 +152,7 @@ function createNetworkMiddleware({
     return next(action)
   }
 }
+
+export const NetworkMiddlewareCreator = { createNetworkMiddleware }
 
 export default createNetworkMiddleware

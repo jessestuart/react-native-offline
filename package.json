@@ -79,7 +79,7 @@
     "contributors:generate": "all-contributors generate",
     "lint": "eslint src/ --ext ts,tsx",
     "precommit": "yarn lint",
-    "prettier": "prettier --write \"src/**/*.{ts,tsx}\"",
+    "prettier": "prettier --write \"src/**/*.{ts,tsx}\" \"test/**/*.{ts,tsx}\"",
     "test": "jest",
     "test:coverage": "node --harmony node_modules/.bin/jest --coverage && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js"
   }

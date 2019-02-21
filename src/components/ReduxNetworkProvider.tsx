@@ -8,7 +8,7 @@ import {
 } from 'utils/constants'
 import { HTTPMethod, FluxAction, NetworkState } from 'types'
 import { connectionChange } from 'redux/actionCreators'
-import { NetworkConnectivity } from 'components/NetworkConnectivity'
+import NetworkConnectivity from 'components/NetworkConnectivity'
 
 interface Props {
   children: Node
@@ -64,8 +64,6 @@ const ConnectedReduxNetworkProvider = connect(mapStateToProps)(
   ReduxNetworkProvider,
 )
 
-export {
-  ConnectedReduxNetworkProvider as default,
-  ReduxNetworkProvider,
-  mapStateToProps,
-}
+export { ReduxNetworkProvider, mapStateToProps }
+
+export default ConnectedReduxNetworkProvider

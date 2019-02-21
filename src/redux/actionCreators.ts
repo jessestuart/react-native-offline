@@ -53,3 +53,10 @@ export const dismissActionsFromQueue = (
   type: actionTypes.DISMISS_ACTIONS_FROM_QUEUE,
   payload: actionTrigger,
 })
+
+export default {
+  connectionChange,
+  dismissActionsFromQueue,
+  fetchOfflineMode,
+  removeActionFromQueue,
+}

@@ -39,4 +39,8 @@ export interface NetworkState {
   actionQueue: any[]
 }
 
-export type HTTPMethod = 'HEAD' | 'OPTIONS' | 'FAIL'
+export enum HTTPMethod {
+  HEAD = 'HEAD',
+  OPTIONS = 'OPTIONS',
+  FAIL = 'FAIL',
+}

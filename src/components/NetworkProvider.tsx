@@ -1,12 +1,13 @@
 import * as React from 'react'
-import NetworkConnectivity from './NetworkConnectivity'
-import NetworkContext from './NetworkContext'
-import { HTTPMethod } from '../types'
+
 import {
   DEFAULT_HTTP_METHOD,
   DEFAULT_PING_SERVER_URL,
   DEFAULT_TIMEOUT,
 } from '../utils/constants'
+import { HTTPMethod } from '../types'
+import NetworkConnectivity from './NetworkConnectivity'
+import NetworkContext from './NetworkContext'
 
 interface ConnectivityState {
   isConnected: boolean
@@ -20,17 +21,17 @@ interface Props {
   pingOnlyIfOffline?: boolean
   pingInBackground?: boolean
   httpMethod?: HTTPMethod
-  children: React.Node
+  children?: Element
 }
 
 NetworkProvider.defaultProps = {
-  pingTimeout: DEFAULT_TIMEOUT,
-  pingServerUrl: DEFAULT_PING_SERVER_URL,
-  shouldPing: true,
+  httpMethod: DEFAULT_HTTP_METHOD,
+  pingInBackground: false,
   pingInterval: 0,
   pingOnlyIfOffline: false,
-  pingInBackground: false,
-  httpMethod: DEFAULT_HTTP_METHOD,
+  pingServerUrl: DEFAULT_PING_SERVER_URL,
+  pingTimeout: DEFAULT_TIMEOUT,
+  shouldPing: true,
 }
 
 function NetworkProvider(props: Props) {

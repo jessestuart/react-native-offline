@@ -3,9 +3,11 @@ import {
   DEFAULT_PING_SERVER_URL,
   DEFAULT_TIMEOUT,
 } from './constants'
+import { DefaultHTTPRequestArguments } from './checkInternetAccess'
+import { HTTPMethod } from '../types'
 
 interface Options {
-  method?: 'HEAD' | 'OPTIONS'
+  method?: HTTPMethod
   url: string
   timeout?: number
   testMethod?:
@@ -27,6 +29,10 @@ export const headers = {
   Expires: 0,
 }
 
+const DefaultHTTPRequestOptions = Object.freeze({
+  ...DefaultHTTPRequestArguments,
+})
+
 /**
  * Utility that promisifies XMLHttpRequest in order to have a nice API that supports cancellation.
  * @param method
@@ -35,12 +41,12 @@ export const headers = {
  * @param testMethod: for testing purposes
  * @returns {Promise}
  */
-export default function makeHttpRequest({
+export function makeHttpRequest({
   method = DEFAULT_HTTP_METHOD,
   url = DEFAULT_PING_SERVER_URL,
   timeout = DEFAULT_TIMEOUT,
   testMethod,
-}: Options = {}) {
+}: Options = DefaultHTTPRequestOptions): Promise<any> {
   return new Promise(
     (
       resolve: (param0: ResolvedValue) => void,
@@ -79,3 +85,5 @@ export default function makeHttpRequest({
     },
   )
 }
+
+export default { makeHttpRequest }

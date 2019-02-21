@@ -1,4 +1,5 @@
-const path = require('path');
+// eslint-disable-next-line
+const path = require('path')
 
 module.exports = {
   collectCoverage: true,
@@ -16,4 +17,4 @@ module.exports = {
       '<rootDir>/node_modules/react-native/jest/preprocessor.js',
   },
   modulePathIgnorePatterns: ['<rootDir>/example/'],
-};
+}

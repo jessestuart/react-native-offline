@@ -1,29 +1,35 @@
 import * as React from 'react'
 import { AppState, NetInfo, Platform } from 'react-native'
-import { HTTPMethod, State } from '../types'
-import * as connectivityInterval from '../utils/checkConnectivityInterval'
-import checkInternetAccess from '../utils/checkInternetAccess'
+
+import { HTTPMethod, State } from 'types'
+import connectivityInterval from 'utils/checkConnectivityInterval'
+import InternetAccessChecker, {
+  checkInternetAccess,
+} from 'utils/checkInternetAccess'
 import {
   DEFAULT_HTTP_METHOD,
   DEFAULT_TIMEOUT,
   DEFAULT_PING_SERVER_URL,
-} from '../utils/constants'
+} from 'utils/constants'
+
 export interface RequiredProps {
-  children: (state: State) => React.Node
+  children: (state: State) => Element
 }
+
 export interface DefaultProps {
+  httpMethod: HTTPMethod
   onConnectivityChange: (isConnected: boolean) => void
-  pingTimeout: number
-  pingServerUrl: string
-  shouldPing: boolean
+  pingInBackground: boolean
   pingInterval: number
   pingOnlyIfOffline: boolean
-  pingInBackground: boolean
-  httpMethod: HTTPMethod
+  pingServerUrl: string
+  pingTimeout: number
+  shouldPing: boolean
 }
+
 type Props = RequiredProps & DefaultProps
 
-function validateProps(props: Props): void {
+function validateProps(props: Props): void | never {
   if (typeof props.onConnectivityChange !== 'function') {
     throw new Error(
       'you should pass a function as onConnectivityChange parameter',
@@ -72,7 +78,7 @@ class NetworkConnectivity extends React.PureComponent<Props, State> {
     }
   }
 
-  public async componentDidMount() {
+  public async componentDidMount(): Promise<void> {
     const { pingInterval } = this.props
     const handler = this.getConnectionChangeHandler()
 
@@ -87,7 +93,7 @@ class NetworkConnectivity extends React.PureComponent<Props, State> {
     }
   }
 
-  public componentDidUpdate(prevProps: Props, prevState: State) {
+  public componentDidUpdate(prevProps: Props, prevState: State): void {
     const { pingServerUrl, onConnectivityChange } = this.props
     const { isConnected } = this.state
     if (prevProps.pingServerUrl !== pingServerUrl) {
@@ -109,7 +115,7 @@ class NetworkConnectivity extends React.PureComponent<Props, State> {
     return shouldPing ? this.handleNetInfoChange : this.handleConnectivityChange
   }
 
-  public readonly handleNetInfoChange = (isConnected: boolean) => {
+  public handleNetInfoChange = (isConnected: boolean) => {
     if (!isConnected) {
       this.handleConnectivityChange(isConnected)
     } else {
@@ -117,7 +123,7 @@ class NetworkConnectivity extends React.PureComponent<Props, State> {
     }
   }
 
-  public readonly checkInternet = async () => {
+  public checkInternet = async () => {
     const {
       pingInBackground,
       pingTimeout,
@@ -127,7 +133,7 @@ class NetworkConnectivity extends React.PureComponent<Props, State> {
     if (pingInBackground === false && AppState.currentState !== 'active') {
       return // <-- Return early as we don't care about connectivity if app is not in foreground.
     }
-    const hasInternetAccess = await checkInternetAccess({
+    const hasInternetAccess = await InternetAccessChecker.checkInternetAccess({
       url: pingServerUrl,
       timeout: pingTimeout,
       method: httpMethod,
@@ -136,7 +142,7 @@ class NetworkConnectivity extends React.PureComponent<Props, State> {
     this.handleConnectivityChange(hasInternetAccess)
   }
 
-  public readonly intervalHandler = () => {
+  public intervalHandler = () => {
     const { isConnected } = this.state
     const { pingOnlyIfOffline } = this.props
     if (isConnected && pingOnlyIfOffline === true) {
@@ -145,7 +151,7 @@ class NetworkConnectivity extends React.PureComponent<Props, State> {
     this.checkInternet()
   }
 
-  public readonly handleConnectivityChange = (isConnected: boolean) => {
+  public handleConnectivityChange = (isConnected: boolean) => {
     this.setState({
       isConnected,
     })
