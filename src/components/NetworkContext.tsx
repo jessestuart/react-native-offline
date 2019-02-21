@@ -1,5 +1,5 @@
-import { createContext } from 'react';
+import { createContext } from 'react'
 
-const NetworkContext = createContext('network');
+const NetworkContext = createContext('network')
 
-export default NetworkContext;
+export default NetworkContext

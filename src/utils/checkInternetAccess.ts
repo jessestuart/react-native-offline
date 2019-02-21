@@ -1,15 +1,15 @@
-import makeHttpRequest from './makeHttpRequest';
-import { HTTPMethod } from 'types';
+import makeHttpRequest from './makeHttpRequest'
+import { HTTPMethod } from 'types'
 import {
   DEFAULT_HTTP_METHOD,
   DEFAULT_PING_SERVER_URL,
   DEFAULT_TIMEOUT,
-} from './constants';
+} from './constants'
 
 interface Arguments {
-  url: string;
-  timeout: number;
-  method: HTTPMethod;
+  url: string
+  timeout: number
+  method: HTTPMethod
 }
 
 export default function checkInternetAccess({
@@ -23,11 +23,11 @@ export default function checkInternetAccess({
         method,
         url,
         timeout,
-      });
+      })
 
-      resolve(true);
+      resolve(true)
     } catch (e) {
-      resolve(false);
+      resolve(false)
     }
-  });
+  })
 }
