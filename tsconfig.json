@@ -1,0 +1,23 @@
+{
+  "compilerOptions": {
+    "allowJs": true,
+    "allowSyntheticDefaultImports": true,
+    "baseUrl": "./src",
+    "esModuleInterop": true,
+    "experimentalDecorators": true,
+    "jsx": "react-native",
+    "lib": ["dom", "es2015", "es6", "esnext"],
+    "module": "esnext",
+    "moduleResolution": "node",
+    "noEmit": true,
+    "noImplicitAny": false,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "pretty": true,
+    "strictNullChecks": true,
+    "target": "esnext",
+    "typeRoots": ["node_modules/@types"],
+    "types": ["jest", "react", "redux-mock-store"]
+  },
+  "include": ["src/**/*.ts", "src/**/*.tsx"]
+}
