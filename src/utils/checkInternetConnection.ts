@@ -1,6 +1,6 @@
-import { NetInfo } from 'react-native';
-import checkInternetAccess from './checkInternetAccess';
-import { DEFAULT_PING_SERVER_URL, DEFAULT_TIMEOUT } from './constants';
+import { NetInfo } from 'react-native'
+import checkInternetAccess from './checkInternetAccess'
+import { DEFAULT_PING_SERVER_URL, DEFAULT_TIMEOUT } from './constants'
 
 /**
  * Utility that allows to query for internet connectivity on demand
@@ -16,9 +16,9 @@ export default async function checkInternetConnection(
 ): Promise<boolean> {
   return NetInfo.isConnected.fetch().then(async (isConnected: boolean) => {
     if (shouldPing) {
-      const hasInternetAccess = await checkInternetAccess({ timeout, url });
-      return hasInternetAccess;
+      const hasInternetAccess = await checkInternetAccess({ timeout, url })
+      return hasInternetAccess
     }
-    return isConnected;
-  });
+    return isConnected
+  })
 }

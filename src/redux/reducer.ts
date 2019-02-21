@@ -1,40 +1,40 @@
-import { get, without } from 'lodash';
+import { get, without } from 'lodash'
 
-import actionTypes from './actionTypes';
-import getSimilarActionInQueue from 'utils/getSimilarActionInQueue';
+import actionTypes from './actionTypes'
+import getSimilarActionInQueue from 'utils/getSimilarActionInQueue'
 import {
   FluxAction,
   FluxActionWithPreviousIntent,
   FluxActionForRemoval,
   NetworkState,
-} from 'types';
+} from 'types'
 
 export const initialState = {
   isConnected: true,
   actionQueue: [],
-};
+}
 
 function handleOfflineAction(
   state: NetworkState,
   { payload: { prevAction, prevThunk }, meta }: FluxActionWithPreviousIntent,
 ): NetworkState {
   const isActionToRetry =
-    typeof prevAction === 'object' && get(meta, 'retry') === true;
+    typeof prevAction === 'object' && get(meta, 'retry') === true
 
   const isThunkToRetry =
-    typeof prevThunk === 'function' && get(prevThunk, 'meta.retry') === true;
+    typeof prevThunk === 'function' && get(prevThunk, 'meta.retry') === true
 
   if (isActionToRetry || isThunkToRetry) {
     // If a similar action already existed on the queue, we remove it and push it again to the end of the queue
-    const actionToLookUp = prevAction || prevThunk;
+    const actionToLookUp = prevAction || prevThunk
     const actionWithMetaData =
       typeof actionToLookUp === 'object'
         ? { ...actionToLookUp, meta }
-        : actionToLookUp;
+        : actionToLookUp
     const similarActionQueued = getSimilarActionInQueue(
       actionWithMetaData,
       state.actionQueue,
-    );
+    )
 
     return {
       ...state,
@@ -44,24 +44,21 @@ function handleOfflineAction(
             actionWithMetaData,
           ]
         : [...state.actionQueue, actionWithMetaData],
-    };
+    }
   }
-  return state;
+  return state
 }
 
 function handleRemoveActionFromQueue(
   state: NetworkState,
   action: FluxActionForRemoval,
 ): NetworkState {
-  const similarActionQueued = getSimilarActionInQueue(
-    action,
-    state.actionQueue,
-  );
+  const similarActionQueued = getSimilarActionInQueue(action, state.actionQueue)
 
   return {
     ...state,
     actionQueue: without(state.actionQueue, similarActionQueued),
-  };
+  }
 }
 
 function handleDismissActionsFromQueue(
@@ -69,14 +66,14 @@ function handleDismissActionsFromQueue(
   triggerActionToDismiss: string,
 ): NetworkState {
   const newActionQueue = state.actionQueue.filter((action: FluxAction) => {
-    const dismissArray = get(action, 'meta.dismiss', []);
-    return !dismissArray.includes(triggerActionToDismiss);
-  });
+    const dismissArray = get(action, 'meta.dismiss', [])
+    return !dismissArray.includes(triggerActionToDismiss)
+  })
 
   return {
     ...state,
     actionQueue: newActionQueue,
-  };
+  }
 }
 
 export default function(
@@ -88,19 +85,19 @@ export default function(
       return {
         ...state,
         isConnected: action.payload,
-      };
+      }
 
     case actionTypes.FETCH_OFFLINE_MODE:
-      return handleOfflineAction(state, action);
+      return handleOfflineAction(state, action)
     case actionTypes.REMOVE_FROM_ACTION_QUEUE:
-      return handleRemoveActionFromQueue(state, action.payload);
+      return handleRemoveActionFromQueue(state, action.payload)
     case actionTypes.DISMISS_ACTIONS_FROM_QUEUE:
-      return handleDismissActionsFromQueue(state, action.payload);
+      return handleDismissActionsFromQueue(state, action.payload)
     default:
-      return state;
+      return state
   }
 }
 
 export function networkSelector(state: { network: NetworkState }) {
-  return state.network;
+  return state.network
 }

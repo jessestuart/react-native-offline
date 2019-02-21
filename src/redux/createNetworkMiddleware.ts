@@ -1,42 +1,42 @@
-import { find, get } from 'lodash';
+import { find, get } from 'lodash'
 
 import {
   fetchOfflineMode,
   removeActionFromQueue,
   dismissActionsFromQueue,
-} from './actionCreators';
-import { NetworkState } from '../types';
-import networkActionTypes from './actionTypes';
-import wait from 'utils/wait';
+} from './actionCreators'
+import { NetworkState } from '../types'
+import networkActionTypes from './actionTypes'
+import wait from 'utils/wait'
 
 interface MiddlewareAPI<S> {
-  dispatch: (action: any) => void;
-  getState(): S;
+  dispatch: (action: any) => void
+  getState(): S
 }
 
 interface State {
-  network: NetworkState;
+  network: NetworkState
 }
 
 interface Arguments {
-  regexActionType?: RegExp;
-  actionTypes?: string[];
-  queueReleaseThrottle?: number;
+  regexActionType?: RegExp
+  actionTypes?: string[]
+  queueReleaseThrottle?: number
 }
 
 function validateParams(regexActionType, actionTypes): void | never {
   if ({}.toString.call(regexActionType) !== '[object RegExp]')
-    throw new Error('You should pass a regex as regexActionType param');
+    throw new Error('You should pass a regex as regexActionType param')
 
   if ({}.toString.call(actionTypes) !== '[object Array]')
-    throw new Error('You should pass an array as actionTypes param');
+    throw new Error('You should pass an array as actionTypes param')
 }
 
 function findActionToBeDismissed(action, actionQueue) {
   return find(actionQueue, (a: any) => {
-    const actionsToDismiss = get(a, 'meta.dismiss', []);
-    return actionsToDismiss.includes(action.type);
-  });
+    const actionsToDismiss = get(a, 'meta.dismiss', [])
+    return actionsToDismiss.includes(action.type)
+  })
 }
 
 function isObjectAndShouldBeIntercepted(
@@ -47,11 +47,11 @@ function isObjectAndShouldBeIntercepted(
   return (
     typeof action === 'object' &&
     (regexActionType.test(action.type) || actionTypes.includes(action.type))
-  );
+  )
 }
 
 function isThunkAndShouldBeIntercepted(action): boolean {
-  return typeof action === 'function' && action.interceptInOffline === true;
+  return typeof action === 'function' && action.interceptInOffline === true
 }
 
 function checkIfActionShouldBeIntercepted(
@@ -62,7 +62,7 @@ function checkIfActionShouldBeIntercepted(
   return (
     isObjectAndShouldBeIntercepted(action, regexActionType, actionTypes) ||
     isThunkAndShouldBeIntercepted(action)
-  );
+  )
 }
 
 function didComeBackOnline(action, wasConnected): boolean {
@@ -70,23 +70,23 @@ function didComeBackOnline(action, wasConnected): boolean {
     action.type === networkActionTypes.CONNECTION_CHANGE &&
     !wasConnected &&
     action.payload === true
-  );
+  )
 }
 
 export const createReleaseQueue = (getState, next, delay) => async queue => {
   // eslint-disable-next-line
   for (const action of queue) {
-    const { isConnected } = getState().network;
+    const { isConnected } = getState().network
     if (isConnected) {
-      next(removeActionFromQueue(action));
-      next(action);
+      next(removeActionFromQueue(action))
+      next(action)
       // eslint-disable-next-line
-      await wait(delay);
+      await wait(delay)
     } else {
-      break;
+      break
     }
   }
-};
+}
 
 function createNetworkMiddleware({
   regexActionType = /FETCH.*REQUEST/,
@@ -96,47 +96,47 @@ function createNetworkMiddleware({
   return ({ getState }: MiddlewareAPI<State>) => (
     next: (action: any) => void,
   ) => (action: any) => {
-    const { isConnected, actionQueue } = getState().network;
+    const { isConnected, actionQueue } = getState().network
     const releaseQueue = createReleaseQueue(
       getState,
       next,
       queueReleaseThrottle,
-    );
+    )
 
-    validateParams(regexActionType, actionTypes);
+    validateParams(regexActionType, actionTypes)
 
     const shouldInterceptAction = checkIfActionShouldBeIntercepted(
       action,
       regexActionType,
       actionTypes,
-    );
+    )
 
     if (shouldInterceptAction && isConnected === false) {
       // Offline, preventing the original action from being dispatched.
       // Dispatching an internal action instead.
-      return next(fetchOfflineMode(action));
+      return next(fetchOfflineMode(action))
     }
 
-    const isBackOnline = didComeBackOnline(action, isConnected);
+    const isBackOnline = didComeBackOnline(action, isConnected)
     if (isBackOnline) {
       // Dispatching queued actions in order of arrival (if we have any)
-      next(action);
-      return releaseQueue(actionQueue);
+      next(action)
+      return releaseQueue(actionQueue)
     }
 
     // Checking if we have a dismissal case
     const isAnyActionToBeDismissed = findActionToBeDismissed(
       action,
       actionQueue,
-    );
+    )
 
     if (isAnyActionToBeDismissed && !isConnected) {
-      next(dismissActionsFromQueue(action.type));
+      next(dismissActionsFromQueue(action.type))
     }
 
     // Proxy the original action to the next middleware on the chain or final dispatch
-    return next(action);
-  };
+    return next(action)
+  }
 }
 
-export default createNetworkMiddleware;
+export default createNetworkMiddleware

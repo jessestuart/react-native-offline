@@ -2,30 +2,30 @@ import {
   DEFAULT_HTTP_METHOD,
   DEFAULT_PING_SERVER_URL,
   DEFAULT_TIMEOUT,
-} from './constants';
+} from './constants'
 
 interface Options {
-  method?: 'HEAD' | 'OPTIONS';
-  url: string;
-  timeout?: number;
+  method?: 'HEAD' | 'OPTIONS'
+  url: string
+  timeout?: number
   testMethod?:
     | 'onload/2xx'
     | 'onload/3xx'
     | 'onload/4xx'
     | 'onload/5xx'
     | 'onerror'
-    | 'ontimeout';
+    | 'ontimeout'
 }
 
 interface ResolvedValue {
-  status: number;
+  status: number
 }
 
 export const headers = {
   'Cache-Control': 'no-cache, no-store, must-revalidate',
   Pragma: 'no-cache',
   Expires: 0,
-};
+}
 
 /**
  * Utility that promisifies XMLHttpRequest in order to have a nice API that supports cancellation.
@@ -47,35 +47,35 @@ export default function makeHttpRequest({
       reject: (param0: ResolvedValue) => void,
     ) => {
       // $FlowFixMe
-      const xhr = new XMLHttpRequest(testMethod);
-      xhr.open(method, url);
-      xhr.timeout = timeout;
+      const xhr = new XMLHttpRequest(testMethod)
+      xhr.open(method, url)
+      xhr.timeout = timeout
       xhr.onload = function onLoad() {
         // 3xx is a valid response for us, since the server was reachable
         if (this.status >= 200 && this.status < 400) {
           resolve({
             status: this.status,
-          });
+          })
         } else {
           reject({
             status: this.status,
-          });
+          })
         }
-      };
+      }
       xhr.onerror = function onError() {
         reject({
           status: this.status,
-        });
-      };
+        })
+      }
       xhr.ontimeout = function onTimeOut() {
         reject({
           status: this.status,
-        });
-      };
+        })
+      }
       Object.keys(headers).forEach((key: string) => {
-        xhr.setRequestHeader(key, headers[key]);
-      });
-      xhr.send(null);
+        xhr.setRequestHeader(key, headers[key])
+      })
+      xhr.send(null)
     },
-  );
+  )
 }

@@ -1,25 +1,25 @@
-import actionTypes from './actionTypes';
+import actionTypes from './actionTypes'
 import {
   FluxAction,
   FluxActionWithPreviousIntent,
   FluxActionForRemoval,
   FluxActionForDismissal,
-} from 'types';
+} from 'types'
 
-type EnqueuedAction = FluxAction | Function;
+type EnqueuedAction = FluxAction | Function
 
 export const connectionChange = (isConnected: boolean): FluxAction => ({
   type: actionTypes.CONNECTION_CHANGE,
   payload: isConnected,
-});
+})
 
 export const fetchOfflineMode = (
-  action: EnqueuedAction
+  action: EnqueuedAction,
 ): FluxActionWithPreviousIntent => {
   // @ts-ignore
-  const { meta = {}, ...actionRest } = action;
+  const { meta = {}, ...actionRest } = action
   if (typeof action === 'object') {
-    const prevAction: FluxAction = { ...actionRest };
+    const prevAction: FluxAction = { ...actionRest }
     return {
       type: actionTypes.FETCH_OFFLINE_MODE,
       payload: {
@@ -27,7 +27,7 @@ export const fetchOfflineMode = (
       },
 
       meta,
-    };
+    }
   }
   // Thunk
   return {
@@ -37,19 +37,19 @@ export const fetchOfflineMode = (
     },
 
     meta,
-  };
-};
+  }
+}
 
 export const removeActionFromQueue = (
-  action: EnqueuedAction
+  action: EnqueuedAction,
 ): FluxActionForRemoval => ({
   type: actionTypes.REMOVE_FROM_ACTION_QUEUE,
   payload: action,
-});
+})
 
 export const dismissActionsFromQueue = (
-  actionTrigger: string
+  actionTrigger: string,
 ): FluxActionForDismissal => ({
   type: actionTypes.DISMISS_ACTIONS_FROM_QUEUE,
   payload: actionTrigger,
-});
+})

@@ -1,26 +1,26 @@
-import * as React from 'react';
-import NetworkConnectivity from './NetworkConnectivity';
-import NetworkContext from './NetworkContext';
-import { HTTPMethod } from '../types';
+import * as React from 'react'
+import NetworkConnectivity from './NetworkConnectivity'
+import NetworkContext from './NetworkContext'
+import { HTTPMethod } from '../types'
 import {
   DEFAULT_HTTP_METHOD,
   DEFAULT_PING_SERVER_URL,
   DEFAULT_TIMEOUT,
-} from '../utils/constants';
+} from '../utils/constants'
 
 interface ConnectivityState {
-  isConnected: boolean;
+  isConnected: boolean
 }
 
 interface Props {
-  pingTimeout?: number;
-  pingServerUrl?: string;
-  shouldPing?: boolean;
-  pingInterval?: number;
-  pingOnlyIfOffline?: boolean;
-  pingInBackground?: boolean;
-  httpMethod?: HTTPMethod;
-  children: React.Node;
+  pingTimeout?: number
+  pingServerUrl?: string
+  shouldPing?: boolean
+  pingInterval?: number
+  pingOnlyIfOffline?: boolean
+  pingInBackground?: boolean
+  httpMethod?: HTTPMethod
+  children: React.Node
 }
 
 NetworkProvider.defaultProps = {
@@ -31,10 +31,10 @@ NetworkProvider.defaultProps = {
   pingOnlyIfOffline: false,
   pingInBackground: false,
   httpMethod: DEFAULT_HTTP_METHOD,
-};
+}
 
 function NetworkProvider(props: Props) {
-  const { children, ...rest } = props;
+  const { children, ...rest } = props
   return (
     <NetworkConnectivity {...rest}>
       {(connectionState: ConnectivityState) => (
@@ -43,7 +43,7 @@ function NetworkProvider(props: Props) {
         </NetworkContext.Provider>
       )}
     </NetworkConnectivity>
-  );
+  )
 }
 
-export default NetworkProvider;
+export default NetworkProvider
